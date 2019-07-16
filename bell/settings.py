@@ -2,16 +2,20 @@ import os
 
 import dj_database_url
 import django_heroku
+from django.conf.global_settings import DATETIME_INPUT_FORMATS
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+
+DATETIME_INPUT_FORMATS += ("%Y-%m-%dT%H:%M:%SZ",)
+
 
 SECRET_KEY = "14s$-%b8x%k!p3ah-mleqb#80esw*sfxxn@kgqyk9g=e*yvl8$"
 
 DEBUG = False
 
 
-INSTALLED_APPS = ["django.contrib.contenttypes"]
+INSTALLED_APPS = ["django.contrib.contenttypes", "calls"]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -39,7 +43,7 @@ AUTH_PASSWORD_VALIDATORS = []
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
 USE_I18N = True
-USE_L10N = True
+USE_L10N = False
 USE_TZ = True
 
 DATABASES["default"].update(dj_database_url.config(conn_max_age=500, ssl_require=True))
