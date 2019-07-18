@@ -1,0 +1,16 @@
+[run]
+branch = True
+omit =
+    **/tests/*
+    **/migrations/*
+    */apps.py
+    */__init__.py
+    */urls.py
+    */settings.py
+    manage.py
+    bell/wsgi.py
+
+[report]
+show_missing = True
+precision = 2
+

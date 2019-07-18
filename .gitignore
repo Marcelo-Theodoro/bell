@@ -6,3 +6,4 @@ staticfiles
 *.sqlite3.vscode
 .vscode/
 db.sqlite3
+.coverage
