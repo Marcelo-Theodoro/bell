@@ -1,9 +1,14 @@
 from copy import copy
 
 from django import forms
+from django.core.validators import RegexValidator
 from django.utils.functional import cached_property
 
 from .models import Record
+
+PhoneNumberValidator = RegexValidator(
+    regex=r"^\d{10,11}$", message="Invalid phone number"
+)
 
 
 class BaseRecordForm(forms.Form):
@@ -36,8 +41,8 @@ class BaseRecordForm(forms.Form):
 
 
 class StartRecordForm(BaseRecordForm):
-    source = forms.IntegerField(required=True)
-    destination = forms.IntegerField(required=True)
+    source = forms.CharField(validators=[PhoneNumberValidator], required=True)
+    destination = forms.CharField(validators=[PhoneNumberValidator], required=True)
 
     def clean_timestamp(self):
         started_at = self.cleaned_data["timestamp"]

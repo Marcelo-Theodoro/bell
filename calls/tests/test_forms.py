@@ -26,8 +26,8 @@ class StartRecordFormTestCase(TestCase, MissingFieldMixin):
         super().setUpClass()
         cls.data = {
             "call_id": "1",
-            "source": 11123456789,
-            "destination": 1212345678,
+            "source": "11123456789",  # 11 digits
+            "destination": "1212345678",  # 10 digits
             "timestamp": "2016-02-29T15:00:00Z",
         }
         cls.end_record_data = {"call_id": "1", "ended_at": "2016-02-29T16:00:00Z"}
@@ -75,6 +75,22 @@ class StartRecordFormTestCase(TestCase, MissingFieldMixin):
         self.assertEqual(len(form.errors), 1)
         self.assertEqual(form.errors["timestamp"], ["Call end time before start time"])
 
+    def test_create_start_invalid_source_number(self):
+        data = copy(self.data)
+        data["source"] = "123456789"  # 9 digits
+        form = self.form(data=data)
+        self.assertFalse(form.is_valid())
+        self.assertEqual(len(form.errors), 1)
+        self.assertEqual(form.errors["source"], ["Invalid phone number"])
+
+    def test_create_start_invalid_destination_number(self):
+        data = copy(self.data)
+        data["destination"] = "123456789123"  # 12 digits
+        form = self.form(data=data)
+        self.assertFalse(form.is_valid())
+        self.assertEqual(len(form.errors), 1)
+        self.assertEqual(form.errors["destination"], ["Invalid phone number"])
+
     def test_create_without_call_id_error(self):
         self._test_missing_field("call_id")
 
@@ -97,8 +113,8 @@ class EndRecordFormTestCase(TestCase, MissingFieldMixin):
         cls.data = {"call_id": "1", "timestamp": "2016-02-29T16:00:00Z"}
         cls.start_record_data = {
             "call_id": "1",
-            "source": 11123456789,
-            "destination": 1212345678,
+            "source": "11123456789",
+            "destination": "1212345678",
             "started_at": "2016-02-29T15:00:00Z",
         }
 
