@@ -1,5 +1,6 @@
 from copy import copy
 
+from dateutil.parser import parse
 from django.test import TestCase
 
 from ..models import Record
@@ -13,8 +14,8 @@ class RecordTestCase(TestCase):
             "call_id": "1",
             "source": "11123456789",
             "destination": "1212345678",
-            "started_at": "2016-02-29T15:00:00Z",
-            "ended_at": "2016-02-29T16:00:00Z",
+            "started_at": parse("2016-02-29T15:00:00Z"),
+            "ended_at": parse("2016-02-29T16:00:00Z"),
         }
 
     def _test_completed(self, data, status_expeceted, status_method="completed"):
