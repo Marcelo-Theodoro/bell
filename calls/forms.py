@@ -12,7 +12,6 @@ class BaseRecordForm(forms.Form):
 
     def record(self, call_id):
         if call_id:
-            # This will make we always return 201 and update to the last value sent
             return Record.objects.filter(call_id=call_id).first() or Record(
                 call_id=call_id
             )
@@ -20,6 +19,12 @@ class BaseRecordForm(forms.Form):
     @cached_property
     def instance(self):
         return self.record(self.data.get("call_id"))
+
+    def clean(self, *args, **kwargs):
+        response = super().clean(*args, **kwargs)
+        if self.instance and self.instance.completed:
+            raise forms.ValidationError("This record is completed")
+        return response
 
     def save(self):
         data = self.prepared_data
@@ -44,6 +49,12 @@ class StartRecordForm(BaseRecordForm):
             self.add_error("timestamp", "Call end time before start time")
         return started_at
 
+    def clean(self, *args, **kwargs):
+        response = super().clean(*args, **kwargs)
+        if self.instance and self.instance.start_record_completed:
+            raise forms.ValidationError("The start record of this call is completed")
+        return response
+
     @property
     def prepared_data(self):
         data = copy(self.cleaned_data)
@@ -52,6 +63,13 @@ class StartRecordForm(BaseRecordForm):
 
 
 class EndRecordForm(BaseRecordForm):
+    def clean(self, *args, **kwargs):
+        response = super().clean(*args, **kwargs)
+        if self.instance and self.instance.end_record_completed:
+            raise forms.ValidationError("The end record of this call is completed")
+
+        return response
+
     @property
     def prepared_data(self):
         data = copy(self.cleaned_data)
