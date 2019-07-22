@@ -1,4 +1,6 @@
 import os
+from datetime import time
+from decimal import Decimal
 
 import dj_database_url
 import django_heroku
@@ -6,6 +8,22 @@ from django.conf.global_settings import DATETIME_INPUT_FORMATS
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+
+# TODO: env vars
+FEES = {
+    "standard": {
+        "charge": Decimal(0.36),
+        "charge_per_minute": Decimal(0.09),
+        "starts_at": time(6, 0, 0),
+        "ends_at": time(21, 59, 59),
+    },
+    "reduced": {
+        "charge": Decimal(0.36),
+        "charge_per_minute": Decimal(0.00),
+        "starts_at": time(22, 0, 0),
+        "ends_at": time(5, 59, 59),
+    },
+}
 
 DATETIME_INPUT_FORMATS += ("%Y-%m-%dT%H:%M:%SZ",)
 
@@ -15,7 +33,12 @@ SECRET_KEY = "14s$-%b8x%k!p3ah-mleqb#80esw*sfxxn@kgqyk9g=e*yvl8$"
 DEBUG = False
 
 
-INSTALLED_APPS = ["django.contrib.contenttypes", "calls"]
+INSTALLED_APPS = [
+    "django.contrib.contenttypes",
+    # Our apps
+    "calls.apps.CallsConfig",
+    "reports.apps.ReportsConfig",
+]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
