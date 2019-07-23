@@ -28,11 +28,20 @@ class ReportTestCase(TestCase):
             "call_started_at": parse("2016-01-01T21:57:13Z"),
             "call_ended_at": parse("2016-01-01T22:17:53Z"),
         }
+        cls.reduced_and_standard_data = {
+            "subscriber": "11981094379",
+            "destination": "1198109437",
+            "call_started_at": parse("2017-12-12T04:57:13Z"),
+            "call_ended_at": parse("2017-12-12T06:10:56Z"),
+        }
 
         cls.report_standard_only = Report.objects.create(**cls.standard_data)
         cls.report_reduced_only = Report.objects.create(**cls.reduced_data)
         cls.report_standard_and_reduced = Report.objects.create(
             **cls.standard_and_reduced_data
+        )
+        cls.report_reduced_and_standard = Report.objects.create(
+            **cls.reduced_and_standard_data
         )
 
     def test_call_price_standard_only(self):
@@ -44,12 +53,22 @@ class ReportTestCase(TestCase):
     def test_call_price_standard_and_reduced(self):
         self.assertEqual(self.report_standard_and_reduced.price_label, "R$ 0,54")
 
+    def test_call_price_reduced_and_standard(self):
+        self.assertEqual(self.report_reduced_and_standard.price_label, "R$ 1,26")
+
     def test_call_price_over_day(self):
-        # calc = ((16*60) * 0.09) + 0.36
         data = copy(self.standard_data)
-        data["call_ended_at"] = parse("2016-01-02T15:00:01Z")
+        data["call_started_at"] = parse("2017-12-13T21:57:13Z")
+        data["call_ended_at"] = parse("2017-12-14T22:10:56Z")
         report = Report.objects.create(**data)
-        self.assertEqual(report.price_label, "R$ 86,76")
+        self.assertEqual(report.price_label, "R$ 86,85")
+
+    def test_call_price_one_minute(self):
+        data = copy(self.standard_data)
+        data["call_started_at"] = parse("2017-12-13T21:57:13Z")
+        data["call_ended_at"] = parse("2017-12-13T21:58:13Z")
+        report = Report.objects.create(**data)
+        self.assertEqual(report.price_label, "R$ 0,45")
 
     def test_call_price_less_than_one_minute(self):
         data = copy(self.standard_data)

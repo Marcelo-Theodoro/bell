@@ -1,17 +1,10 @@
-import datetime
-import itertools
 import locale
+from datetime import datetime
 from decimal import Decimal
 
+import pendulum
 from django.conf import settings
 from django.db import models
-
-
-def next_minutes_generator(start_datetime):
-    return (
-        start_datetime + datetime.timedelta(seconds=i)
-        for i in itertools.count(start=60, step=60)
-    )  # pragma: no cover
 
 
 class Report(models.Model):
@@ -49,20 +42,37 @@ class Report(models.Model):
         return per_minute_charge
 
     def minutes_in_each_tarrif(self):
-        count_standard = 0
-        count_reduced = 0
-        for moment in next_minutes_generator(self.call_started_at):  # pragma: no branch
-            if moment > self.call_ended_at:
-                break
-            if (
-                self.standard_starts_at.hour
-                <= moment.hour
-                <= self.standard_ends_at.hour
-            ):
-                count_standard += 1
-            else:
-                count_reduced += 1
-        return {"reduced": count_reduced, "standard": count_standard}
+        minutes_to_charge = []
+
+        call_started_at = pendulum.instance(self.call_started_at)
+        call_ended_at = pendulum.instance(self.call_ended_at)
+
+        call_start_day = pendulum.instance(call_started_at).start_of("day")
+        call_end_day = pendulum.instance(call_ended_at).end_of("day")
+
+        total_duration = pendulum.period(call_start_day, call_end_day)
+        for day in total_duration.range("days"):
+
+            start_standard_charge = pendulum.instance(
+                datetime.combine(day, self.standard_starts_at)
+            )
+            stop_standard_charge = pendulum.instance(
+                datetime.combine(day, self.standard_ends_at)
+            )
+
+            start_charging_at = max(call_started_at, start_standard_charge)
+            stop_charging_at = min(call_ended_at, stop_standard_charge)
+
+            minutes_to_charge_day = (stop_charging_at - start_charging_at).in_minutes()
+            minutes_to_charge.append(minutes_to_charge_day)
+
+        standard_minutes = sum(minutes_to_charge)
+        reduced_minutes = total_duration.in_minutes() - standard_minutes
+
+        return {
+            "reduced": max(0, reduced_minutes),
+            "standard": max(0, standard_minutes),
+        }
 
     @property
     def price_label(self):
