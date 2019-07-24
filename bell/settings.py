@@ -9,7 +9,6 @@ from django.conf.global_settings import DATETIME_INPUT_FORMATS
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 
-# TODO: env vars
 FEES = {
     "standard": {
         "charge": Decimal(0.36),
@@ -30,7 +29,7 @@ DATETIME_INPUT_FORMATS += ("%Y-%m-%dT%H:%M:%SZ",)
 
 SECRET_KEY = "14s$-%b8x%k!p3ah-mleqb#80esw*sfxxn@kgqyk9g=e*yvl8$"
 
-DEBUG = False
+DEBUG = os.environ.get("DEBUG", False)
 
 
 INSTALLED_APPS = [
