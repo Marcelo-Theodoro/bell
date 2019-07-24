@@ -1,14 +1,10 @@
 from copy import copy
 
 from django import forms
-from django.core.validators import RegexValidator
 from django.utils.functional import cached_property
 
 from .models import Record
-
-PhoneNumberValidator = RegexValidator(
-    regex=r"^\d{10,11}$", message="Invalid phone number"
-)
+from .validators import PhoneNumberValidator
 
 
 class BaseRecordForm(forms.Form):
