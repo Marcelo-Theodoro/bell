@@ -1,0 +1,140 @@
+openapi: 3.0.1
+info:
+  title: Bell API
+  description: "Bell API: Phone Bill Control"
+  contact:
+    email: marcelotheodoro@outlook.com
+  version: 1.0.0
+servers:
+- url: https://mth-bell.herokuapp.com/v1/
+tags:
+- name: records
+  description: "Save record information"
+- name: reports
+  description: "Generate bill reports for a number"
+paths:
+  /calls/start/:
+    post:
+      tags:
+      - records
+      summary: "Add a new start call record"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StartCall'
+        required: true
+      responses:
+        201:
+          description: "record created"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StartCall'
+        400:
+          description: "Data did not validate"
+  /calls/end/:
+    post:
+      tags:
+      - records
+      summary: "Add a new end call record"
+      requestBody:
+        description: "Add a new end call objects"
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EndCall'
+        required: true
+      responses:
+        201:
+          description: "record created"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EndCall'
+        400:
+          description: "Data did not validate"
+  /reports/report/{subscriber}/:
+    get:
+      parameters:
+      - name: subscriber
+        in: path
+        description: "Subscriber phone number"
+        required: true
+        schema:
+          type: number
+          example: 11123456789
+      - name: period
+        in: query
+        schema:
+          type: string
+          example: "02/2016"
+        description: "Period that the bills will be returned. If empty, return last closed period"
+        required: false
+      tags:
+      - reports
+      summary: "Get the bill of a number to selected period"
+      responses:
+        200:
+          description: "Records of this number were returned for this period"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Report'
+        400:
+          description: "Period is not valid"
+        404:
+          description: "Invalid subscriber number format"
+components:
+  schemas:
+    StartCall:
+      type: object
+      properties:
+        call_id:
+          type: integer
+          example: 104
+        source:
+          type: integer
+          description: "Source phone of the call"
+          example: 1112345678
+        destination:
+          type: integer
+          description: "Destination phone of the call"
+          example: 11123456789
+        timestamp:
+          type: string
+          description: "When the call started"
+          example: "2018-03-01T22:10:56Z"
+    EndCall:
+      type: object
+      properties:
+        call_id:
+          type: integer
+          example: 109
+        timestamp:
+          type: integer
+          description: "When the call ended"
+          example: "2018-03-01T22:10:56Z"
+    Report:
+      type: object
+      properties:
+        destination:
+          type: integer
+          description: "Destination of the call"
+          example: "1112345678"
+        call_start_date:
+          type: string
+          description: "Date when the call started"
+          example: "2018-03-01"
+        call_start_time:
+          type: string
+          description: "Time when the call started"
+          example: "22:10:56"
+        call_duration:
+          type: string
+          description: "Duration of the call"
+          example: "1h26m23s"
+        price:
+          type: string
+          description: "Total price of the call"
+          example: "R$ 13,65"

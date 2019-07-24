@@ -35,6 +35,9 @@ DEBUG = False
 
 INSTALLED_APPS = [
     "django.contrib.contenttypes",
+    "whitenoise.runserver_nostatic",
+    "django.contrib.staticfiles",
+    "corsheaders",
     # Our apps
     "calls.apps.CallsConfig",
     "reports.apps.ReportsConfig",
@@ -42,10 +45,15 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+CORS_ORIGIN_WHITELIST = ["http://localhost:8000", "http://mth-bell.herokuapp.com"]
 
 ROOT_URLCONF = "bell.urls"
 
@@ -79,6 +87,8 @@ STATIC_ROOT = os.path.join(PROJECT_ROOT, "staticfiles")
 STATIC_URL = "/static/"
 
 STATICFILES_DIRS = [os.path.join(PROJECT_ROOT, "static")]
+
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 
 django_heroku.settings(locals())

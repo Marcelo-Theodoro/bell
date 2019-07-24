@@ -1,7 +1,7 @@
 .python-version
 venv
 *.pyc
-staticfiles
+static/*
 .env
 *.sqlite3.vscode
 .vscode/

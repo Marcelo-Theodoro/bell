@@ -14,6 +14,8 @@ django = "==2.2"
 restless = "==2.1.1"
 dateutils = "==0.6.6"
 pendulum = "*"
+whitenoise = "*"
+django-cors-headers = "*"
 
 [dev-packages]
 ipython = "*"
