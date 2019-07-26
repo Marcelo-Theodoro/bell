@@ -46,15 +46,31 @@ class ReportTestCase(TestCase):
 
     def test_call_price_standard_only(self):
         self.assertEqual(self.report_standard_only.price_label, "R$ 4,86")
+        self.assertEqual(
+            self.report_standard_only.minutes_in_each_tarrif(),
+            {"standard": 50, "reduced": 0},
+        )
 
     def test_call_price_reduced_only(self):
         self.assertEqual(self.report_reduced_only.price_label, "R$ 0,36")
+        self.assertEqual(
+            self.report_reduced_only.minutes_in_each_tarrif(),
+            {"standard": 0, "reduced": 479},
+        )
 
     def test_call_price_standard_and_reduced(self):
         self.assertEqual(self.report_standard_and_reduced.price_label, "R$ 0,54")
+        self.assertEqual(
+            self.report_standard_and_reduced.minutes_in_each_tarrif(),
+            {"standard": 2, "reduced": 18},
+        )
 
     def test_call_price_reduced_and_standard(self):
         self.assertEqual(self.report_reduced_and_standard.price_label, "R$ 1,26")
+        self.assertEqual(
+            self.report_reduced_and_standard.minutes_in_each_tarrif(),
+            {"standard": 10, "reduced": 63},
+        )
 
     def test_call_price_over_day(self):
         data = copy(self.standard_data)

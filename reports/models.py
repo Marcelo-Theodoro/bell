@@ -47,8 +47,8 @@ class Report(models.Model):
         call_started_at = pendulum.instance(self.call_started_at)
         call_ended_at = pendulum.instance(self.call_ended_at)
 
-        call_start_day = pendulum.instance(call_started_at).start_of("day")
-        call_end_day = pendulum.instance(call_ended_at).end_of("day")
+        call_start_day = pendulum.instance(call_started_at)
+        call_end_day = pendulum.instance(call_ended_at)
 
         total_duration = pendulum.period(call_start_day, call_end_day)
         for day in total_duration.range("days"):
