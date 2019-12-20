@@ -212,14 +212,3 @@ Based on my understood of what was required in the tests, I worked with the idea
 The core of the price calculation is in the `reports.models.Report.minutes_in_each_tarrif` method. In this method, we iterate over the days to get the points in time where we should start and stop charging the standard fee.
 I validated the price of the calls based on my manual calculations to be sure if the values returned from the API are correct. In a real world project, I'd ask for more developers and PO's to review my calculations avoiding any kind of bias, but in the case of this test, I had no one to ask, which makes me unease about the correctness of the information.
 
-
-
-### Final comments
-
-I don't remember the last time I started a project from scratch. I had to re-learn some details about starting a project.
-
-I'm not used to work alone, I've been working in teams since I started to program, so I missed someone to discuss possible solutions with me and tell me if I'm not crazy about something. But anyway, it was fun to work on this project.
-
-Hope to discuss with you about this in a near future!
-
-Thanks for the opportunity.
